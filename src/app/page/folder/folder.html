@@ -35,6 +35,19 @@
         <span class="text-sm font-medium">Trash</span>
       </a>
 
+      <div class="pt-6 pb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        Folders
+      </div>
+
+      <a *ngFor="let folder of folders" (click)="openFolder(folder.folderId)"
+        class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors cursor-pointer">
+        <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
+        <span class="text-sm font-medium">{{ folder.name }}</span>
+      </a>
+
+      <!-- Pinned Tags section moved below -->
       <div class="pt-6 pb-2 px-3 flex items-center justify-between text-xs font-semibold text-slate-500 uppercase tracking-wider">
         <span>Pinned Tags</span>
         <button class="hover:text-white"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg></button>
@@ -180,125 +193,57 @@
         </div>
       </div>
 
+     <!-- ...existing code... -->
+
       <!-- Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Collection Card 1 -->
-        <div class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
+
+        <!-- ✅ Dynamic folders from backend -->
+        <div
+          *ngFor="let folder of folders"
+          (click)="openFolder(folder.folderId)"
+          class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
           <div class="flex justify-between items-start mb-4">
             <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
             </div>
-            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-            </button>
           </div>
-          <h3 class="text-lg font-bold text-white mb-1">React Hooks</h3>
-          <p class="text-sm text-slate-400 mb-6 flex-1">Common custom hooks library</p>
+          <!-- ✅ only folder.name exists in your backend -->
+          <h3 class="text-lg font-bold text-white mb-1">{{ folder.name }}</h3>
           <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-700/50">
-            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> 24 Snippets</span>
-            <span>2h ago</span>
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              ID: {{ folder.folderId }}
+            </span>
           </div>
         </div>
 
-        <!-- Collection Card 2 -->
-        <div class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            </div>
-            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-            </button>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">Python Utilities</h3>
-          <p class="text-sm text-slate-400 mb-6 flex-1">Data processing scripts</p>
-          <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-700/50">
-            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> 8 Snippets</span>
-            <span>Yesterday</span>
-          </div>
-        </div>
-
-        <!-- Collection Card 3 -->
-        <div class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
-            </div>
-            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-            </button>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">CSS Layouts</h3>
-          <p class="text-sm text-slate-400 mb-6 flex-1">Grid and Flexbox patterns</p>
-          <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-700/50">
-            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> 15 Snippets</span>
-            <span>1 week ago</span>
-          </div>
-        </div>
-
-        <!-- Collection Card 4 -->
-        <div class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-            </div>
-            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-            </button>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">Docker Configs</h3>
-          <p class="text-sm text-slate-400 mb-6 flex-1">Compose files & Dockerfiles</p>
-          <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-700/50">
-            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> 3 Snippets</span>
-            <span>1 month ago</span>
-          </div>
-        </div>
-
-        <!-- Collection Card 5 -->
-        <div class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center text-slate-300">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
-            </div>
-            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-            </button>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">API Endpoints</h3>
-          <p class="text-sm text-slate-400 mb-6 flex-1">REST & GraphQL queries</p>
-          <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-700/50">
-            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> 42 Snippets</span>
-            <span>2 months ago</span>
-          </div>
-        </div>
-
-        <!-- Collection Card 6 -->
-        <div class="bg-[#1e293b] rounded-xl p-5 border border-slate-700/50 hover:border-slate-600 transition-colors flex flex-col group cursor-pointer">
-          <div class="flex justify-between items-start mb-4">
-            <div class="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 font-bold text-xs">
-              JS
-            </div>
-            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-            </button>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-1">JS Helpers</h3>
-          <p class="text-sm text-slate-400 mb-6 flex-1">Vanilla JS utilities</p>
-          <div class="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-700/50">
-            <span class="flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg> 11 Snippets</span>
-            <span>3 months ago</span>
-          </div>
+        <!-- Empty state -->
+        <div *ngIf="folders.length === 0"
+          class="col-span-full flex flex-col items-center justify-center text-slate-400 py-20">
+          <p class="text-lg font-medium">No folders yet</p>
+          <p class="text-sm text-slate-500">Create your first folder to get started</p>
         </div>
 
         <!-- Add New Collection Card -->
         <button class="border-2 border-dashed border-slate-700 rounded-xl p-5 flex flex-col items-center justify-center text-slate-400 hover:text-white hover:border-slate-500 hover:bg-slate-800/30 transition-all min-h-[200px] group">
           <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mb-4 group-hover:bg-slate-700 transition-colors">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
           </div>
           <span class="font-medium">Add New Collection</span>
         </button>
 
       </div>
+
+<!-- ...existing code... -->
+
+<!-- ...existing code... -->
     </div>
   </main>
 </div>

@@ -1,0 +1,366 @@
+<div class="flex h-screen bg-[#0f172a] text-slate-300 font-sans overflow-hidden">
+
+  <!-- Sidebar -->
+  <aside class="w-48 bg-[#0f172a] border-r border-slate-800/60 flex flex-col">
+    <!-- Logo -->
+    <div class="p-5 flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+      </div>
+      <div>
+        <div class="text-white font-semibold text-sm">Snippet Vault</div>
+        <div class="text-xs text-slate-500">v1.2.0</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+      <a href="#"
+        class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+        <span class="text-sm">All Snippets</span>
+      </a>
+      <a href="#"
+        class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+        <span class="text-sm">Favorites</span>
+      </a>
+      <a href="#"
+        class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+        <span class="text-sm">Trash</span>
+      </a>
+
+      <!-- Folders Section -->
+      <div class="pt-6 pb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        Folders
+      </div>
+
+      <a *ngFor="let folder of folders" (click)="openFolder(folder.folderId)"
+        [class.bg-slate-800]="folder.folderId === folderId" [class.text-white]="folder.folderId === folderId"
+        class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-colors cursor-pointer">
+        <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
+        <span class="text-sm font-medium" [class.text-white]="folder.folderId === folderId">{{ folder.name }}</span>
+      </a>
+    </nav>
+
+    <!-- Bottom -->
+    <div class="p-4">
+      <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span class="text-sm">Settings</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Top Bar: Search + Actions -->
+    <header class="flex items-center justify-between px-8 py-4 border-b border-slate-800/60">
+      <!-- Search -->
+      <div class="relative flex-1 max-w-lg">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <input type="text"
+          class="w-full bg-[#1e293b] border border-slate-700 text-white text-sm rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-blue-500 placeholder-slate-500"
+          placeholder="Search snippets..." />
+      </div>
+
+      <div class="flex items-center gap-3 ml-4">
+        <!-- Notification -->
+        <button class="relative text-slate-400 hover:text-white transition-colors">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-[#0f172a]"></span>
+        </button>
+
+        <!-- New Snippet Button -->
+        <button
+          class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          New Snippet
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto p-8">
+
+      <!-- Snippets Table -->
+      <div class="bg-[#1e293b] rounded-xl border border-slate-700/50 overflow-hidden">
+
+        <!-- Table Header -->
+        <div
+          class="grid grid-cols-12 px-6 py-3 border-b border-slate-700/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <div class="col-span-5">Snippet Name</div>
+          <div class="col-span-2">Language</div>
+          <div class="col-span-3">Tags</div>
+          <div class="col-span-1">Date Created</div>
+          <div class="col-span-1 text-right">Actions</div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="snippets.length === 0" class="flex flex-col items-center justify-center py-20 text-slate-400">
+          <svg class="w-16 h-16 mb-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+          <p class="text-lg font-medium">No snippets yet</p>
+          <p class="text-sm text-slate-500">Add your first snippet to this folder</p>
+        </div>
+
+        <!-- Snippet Rows -->
+        <div *ngFor="let snippet of snippets" (click)="openSnippetModal(snippet)"
+          class="grid grid-cols-12 px-6 py-4 border-b border-slate-700/30 hover:bg-slate-800/40 transition-colors items-center group cursor-pointer">
+
+          <!-- Snippet Name -->
+          <div class="col-span-5 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-sm font-medium text-white">{{ snippet.title }}</div>
+              <div class="text-xs text-slate-500">{{ snippet.description }}</div>
+            </div>
+          </div>
+
+          <!-- Language -->
+          <div class="col-span-2">
+            <span class="flex items-center gap-2 text-sm text-slate-300">
+              <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+              {{ snippet.language }}
+            </span>
+          </div>
+
+          <!-- Tags -->
+          <div class="col-span-3 flex flex-wrap gap-1">
+            <span *ngFor="let tag of snippet.tags" class="px-2 py-0.5 bg-slate-700 text-slate-300 text-xs rounded">
+              {{ tag }}
+            </span>
+          </div>
+
+          <!-- Date -->
+          <div class="col-span-1 text-xs text-slate-500">
+            {{ snippet.createdAt | date:'MMM d, y' }}
+          </div>
+
+          <!-- Actions -->
+          <div class="col-span-1 flex justify-end">
+            <button class="text-slate-500 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between px-6 py-4 text-sm text-slate-400">
+          <span>Showing <span class="text-white font-medium">{{ snippets.length }}</span> results</span>
+          <div class="flex items-center gap-2">
+            <button
+              class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">Previous</button>
+            <button
+              class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">Next</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- ===== Snippet Detail View (Full Screen) ===== -->
+<div *ngIf="selectedSnippet" class="fixed inset-0 z-50 flex bg-[#0f172a] text-slate-300 font-sans">
+
+  <!-- Left Panel: Code Editor -->
+  <div class="flex-1 flex flex-col border-r border-slate-800/60">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800/60 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-bold text-white leading-tight">{{ selectedSnippet.title }}</h2>
+          <p class="text-sm text-slate-400">{{ selectedSnippet.language || 'Unknown' }}</p>
+        </div>
+      </div>
+      <button (click)="closeModal()"
+        class="ml-4 p-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors shrink-0">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Code Area -->
+    <div class="flex-1 overflow-y-auto relative">
+      <!-- Code window bar -->
+      <div
+        class="sticky top-0 z-10 flex items-center justify-between px-4 py-2.5 bg-[#0f172a]/80 border-b border-slate-700/30">
+        <div class="flex items-center gap-1.5">
+          <div class="w-3 h-3 rounded-full bg-red-500/70"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-400/70"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500/70"></div>
+          <span class="ml-3 text-xs font-mono text-slate-500">{{ (selectedSnippet.language || 'text').toLowerCase()
+            }}</span>
+        </div>
+        <button (click)="copyCode()"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+          [class.bg-green-500]="codeCopied" [class.text-white]="codeCopied" [class.bg-slate-700]="!codeCopied"
+          [class.text-slate-300]="!codeCopied" [class.hover:bg-slate-600]="!codeCopied">
+          <svg *ngIf="!codeCopied" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <svg *ngIf="codeCopied" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          {{ codeCopied ? 'Copied!' : 'Copy' }}
+        </button>
+      </div>
+
+      <!-- Syntax-highlighted code with line numbers -->
+      <div class="flex text-sm font-mono leading-relaxed">
+        <div class="flex-shrink-0 text-right pr-3 py-5 text-slate-600 select-none border-r border-slate-800/60"
+          style="width: 3rem;">
+          <ng-container *ngFor="let line of selectedSnippet.code_content?.split('\n'); let i = index">
+            <div>{{ i + 1 }}</div>
+          </ng-container>
+        </div>
+        <pre
+          class="flex-1 p-5 overflow-auto"><code [highlight]="selectedSnippet.code_content || ''" [language]="(selectedSnippet.language || 'text').toLowerCase()"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel: Metadata Sidebar -->
+  <div class="w-80 flex-shrink-0 flex flex-col bg-[#0f172a] border-l border-slate-800/60">
+    <div class="p-6 border-b border-slate-800/60">
+      <h3 class="text-xl font-bold text-white mb-2">{{ selectedSnippet.title }}</h3>
+      <p class="text-sm text-slate-400 mb-4">{{ selectedSnippet.description }}</p>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 mb-4">
+        <button
+          class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+          Edit
+        </button>
+        <button
+          class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Delete
+        </button>
+      </div>
+
+      <!-- Metadata -->
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Language:</span>
+          <span class="text-white">{{ selectedSnippet.language || 'Unknown' }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">Created:</span>
+          <span class="text-white">{{ selectedSnippet.createdAt | date:'MMM d, y' }}</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500">ID:</span>
+          <span class="text-white text-xs">{{ selectedSnippet.snippetId }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="p-6 border-b border-slate-800/60">
+      <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Tags</h4>
+      <div class="flex flex-wrap gap-2">
+        <ng-container *ngIf="selectedSnippet.tags && selectedSnippet.tags.length; else noTags">
+          <span *ngFor="let tag of selectedSnippet.tags"
+            class="px-3 py-1 bg-slate-700/60 text-slate-300 text-xs rounded-full border border-slate-600/40">
+            {{ tag }}
+          </span>
+        </ng-container>
+        <ng-template #noTags>
+          <span class="text-sm text-slate-500">No tags</span>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Related Snippets (Placeholder) -->
+    <div class="flex-1 p-6 overflow-y-auto">
+      <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Related Snippets</h4>
+      <div class="space-y-3">
+        <div
+          class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition-colors cursor-pointer">
+          <div class="w-6 h-6 rounded-md bg-slate-700 flex items-center justify-center">
+            <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          </div>
+          <div>
+            <div class="text-sm font-medium text-white">Related Snippet 1</div>
+            <div class="text-xs text-slate-500">Python, API</div>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition-colors cursor-pointer">
+          <div class="w-6 h-6 rounded-md bg-slate-700 flex items-center justify-center">
+            <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+          </div>
+          <div>
+            <div class="text-sm font-medium text-white">Related Snippet 2</div>
+            <div class="text-xs text-slate-500">JavaScript, Frontend</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
