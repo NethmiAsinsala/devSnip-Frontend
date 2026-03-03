@@ -93,4 +93,12 @@ export class Snippet implements OnInit {
       });
     }
   }
+
+  /** Returns tags as a string array regardless of backend format */
+  parseTags(tags: any): string[] {
+    if (!tags) return [];
+    if (Array.isArray(tags)) return tags.filter(t => t && t.toString().trim());
+    if (typeof tags === 'string') return tags.split(',').map(t => t.trim()).filter(Boolean);
+    return [];
+  }
 }
