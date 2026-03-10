@@ -84,9 +84,9 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
-        <input type="text"
+        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="filterSnippets()"
           class="w-full bg-[#1e293b] border border-slate-700 text-white text-sm rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:border-blue-500 placeholder-slate-500"
-          placeholder="Search snippets..." />
+          placeholder="Search snippets by title, content, or tags..." />
       </div>
 
       <div class="flex items-center gap-3 ml-4">
@@ -100,7 +100,7 @@
         </button>
 
         <!-- New Snippet Button -->
-        <button
+        <button (click)="openCreateModal()"
           class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -127,17 +127,21 @@
         </div>
 
         <!-- Empty State -->
-        <div *ngIf="snippets.length === 0" class="flex flex-col items-center justify-center py-20 text-slate-400">
+        <div *ngIf="filteredSnippets.length === 0"
+          class="flex flex-col items-center justify-center py-20 text-slate-400">
           <svg class="w-16 h-16 mb-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
               d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
-          <p class="text-lg font-medium">No snippets yet</p>
-          <p class="text-sm text-slate-500">Add your first snippet to this folder</p>
+          <p class="text-lg font-medium" *ngIf="snippets.length === 0">No snippets yet</p>
+          <p class="text-sm text-slate-500" *ngIf="snippets.length === 0">Add your first snippet to this folder</p>
+
+          <p class="text-lg font-medium" *ngIf="snippets.length > 0">No snippets found</p>
+          <p class="text-sm text-slate-500" *ngIf="snippets.length > 0">Try adjusting your search</p>
         </div>
 
         <!-- Snippet Rows -->
-        <div *ngFor="let snippet of snippets" (click)="openSnippetModal(snippet)"
+        <div *ngFor="let snippet of filteredSnippets" (click)="openSnippetModal(snippet)"
           class="grid grid-cols-12 px-6 py-4 border-b border-slate-700/30 hover:bg-slate-800/40 transition-colors items-center group cursor-pointer">
 
           <!-- Snippet Name -->
@@ -190,7 +194,7 @@
 
         <!-- Pagination -->
         <div class="flex items-center justify-between px-6 py-4 text-sm text-slate-400">
-          <span>Showing <span class="text-white font-medium">{{ snippets.length }}</span> results</span>
+          <span>Showing <span class="text-white font-medium">{{ filteredSnippets.length }}</span> results</span>
           <div class="flex items-center gap-2">
             <button
               class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">Previous</button>
@@ -212,16 +216,22 @@
   <div class="flex-1 flex flex-col border-r border-slate-800/60">
     <!-- Header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800/60 shrink-0">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center">
+      <div class="flex items-center gap-3 w-full max-w-lg">
+        <div class="w-8 h-8 rounded-lg bg-blue-600/20 flex items-center justify-center shrink-0">
           <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
         </div>
-        <div>
+        <div class="flex-1" *ngIf="!isEditMode">
           <h2 class="text-lg font-bold text-white leading-tight">{{ selectedSnippet.title }}</h2>
           <p class="text-sm text-slate-400">{{ selectedSnippet.language || 'Unknown' }}</p>
+        </div>
+        <div class="flex-1 flex gap-2" *ngIf="isEditMode">
+          <input type="text" [(ngModel)]="selectedSnippet.title"
+            class="bg-[#1e293b] border border-slate-700 text-white text-sm rounded px-2 py-1 w-full" />
+          <input type="text" [(ngModel)]="selectedSnippet.language"
+            class="bg-[#1e293b] border border-slate-700 text-white text-sm rounded px-2 py-1 w-24" />
         </div>
       </div>
       <button (click)="closeModal()"
@@ -260,7 +270,7 @@
       </div>
 
       <!-- Syntax-highlighted code with line numbers -->
-      <div class="flex text-sm font-mono leading-relaxed">
+      <div class="flex text-sm font-mono leading-relaxed min-h-full" *ngIf="!isEditMode">
         <div class="flex-shrink-0 text-right pr-3 py-5 text-slate-600 select-none border-r border-slate-800/60"
           style="width: 3rem;">
           <ng-container *ngFor="let line of selectedSnippet.code_content?.split('\n'); let i = index">
@@ -270,32 +280,68 @@
         <pre
           class="flex-1 p-5 overflow-auto"><code [highlight]="selectedSnippet.code_content || ''" [language]="(selectedSnippet.language || 'text').toLowerCase()"></code></pre>
       </div>
+      <div *ngIf="isEditMode" class="h-full p-4 flex flex-col">
+        <textarea [(ngModel)]="selectedSnippet.code_content"
+          class="w-full flex-1 bg-[#1e293b] text-slate-300 font-mono text-sm p-4 rounded border border-slate-700 focus:outline-none focus:border-blue-500"></textarea>
+      </div>
     </div>
   </div>
 
   <!-- Right Panel: Metadata Sidebar -->
-  <div class="w-80 flex-shrink-0 flex flex-col bg-[#0f172a] border-l border-slate-800/60">
+  <div class="w-80 flex-shrink-0 flex flex-col bg-[#0f172a] border-l border-slate-800/60 overflow-y-auto">
     <div class="p-6 border-b border-slate-800/60">
-      <h3 class="text-xl font-bold text-white mb-2">{{ selectedSnippet.title }}</h3>
-      <p class="text-sm text-slate-400 mb-4">{{ selectedSnippet.description }}</p>
+      <div *ngIf="!isEditMode">
+        <h3 class="text-xl font-bold text-white mb-2">{{ selectedSnippet.title }}</h3>
+        <p class="text-sm text-slate-400 mb-4">{{ selectedSnippet.description }}</p>
+      </div>
+      <div *ngIf="isEditMode" class="mb-4 space-y-3">
+        <label class="block text-sm text-slate-400">Description</label>
+        <textarea [(ngModel)]="selectedSnippet.description"
+          class="w-full bg-[#1e293b] text-sm text-white rounded p-2 border border-slate-700"></textarea>
+      </div>
 
       <!-- Action Buttons -->
-      <div class="flex gap-2 mb-4">
-        <button
+      <div class="flex gap-2 mb-4" *ngIf="!isEditMode">
+        <button (click)="explainCode()" [disabled]="isExplaining"
+          class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600/90 hover:bg-indigo-600 text-white text-sm rounded-lg transition-colors disabled:opacity-50">
+          <svg *ngIf="isExplaining" class="animate-spin -ml-1 mr-1 h-4 w-4 text-white"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <!-- Sparkles icon -->
+          <svg *ngIf="!isExplaining" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          Explain
+        </button>
+        <button (click)="toggleEditMode()"
           class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
           </svg>
-          Edit
         </button>
-        <button
+        <button (click)="openDeleteModal()"
           class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          Delete
+        </button>
+      </div>
+      <div class="flex gap-2 mb-4" *ngIf="isEditMode">
+        <button (click)="saveSnippet()"
+          class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors">
+          Save
+        </button>
+        <button (click)="cancelEdit()"
+          class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm rounded-lg transition-colors">
+          Cancel
         </button>
       </div>
 
@@ -311,7 +357,7 @@
         </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-500">ID:</span>
-          <span class="text-white text-xs">{{ selectedSnippet.snippetId }}</span>
+          <span class="text-white text-xs">{{ selectedSnippet.id }}</span>
         </div>
       </div>
     </div>
@@ -319,7 +365,11 @@
     <!-- Tags -->
     <div class="p-6 border-b border-slate-800/60">
       <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Tags</h4>
-      <div class="flex flex-wrap gap-2">
+      <div *ngIf="isEditMode" class="mb-3">
+        <input type="text" [(ngModel)]="selectedSnippet.tagName" placeholder="Comma separated, e.g. react, hooks"
+          class="w-full bg-[#1e293b] text-sm text-white rounded p-2 border border-slate-700" />
+      </div>
+      <div class="flex flex-wrap gap-2" *ngIf="!isEditMode">
         <ng-container *ngIf="parseTags(selectedSnippet.tagName).length; else noTags">
           <span *ngFor="let tag of parseTags(selectedSnippet.tagName)"
             class="px-3 py-1 bg-slate-700/60 text-slate-300 text-xs rounded-full border border-slate-600/40">
@@ -332,37 +382,162 @@
       </div>
     </div>
 
-    <!-- Related Snippets (Placeholder) -->
+    <!-- AI Explanation Area -->
+    <div class="p-6 border-b border-slate-800/60" *ngIf="isExplaining || explanationResult">
+      <h4 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+        <!-- Sparkles icon on result -->
+        <ng-container *ngIf="!isExplaining">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          AI Explanation
+        </ng-container>
+        <!-- CPU icon on loading -->
+        <ng-container *ngIf="isExplaining">
+          <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 3H7a2 2 0 00-2 2v2M9 3h6M9 3v2m6-2h2a2 2 0 012 2v2M15 3v2M3 9v6M3 9h2m-2 6h2m16-6v6m-2-6h2m-2 6h2M9 21h6M9 21v-2m6 2v-2M5 21h2a2 2 0 002-2v-2M17 21h2a2 2 0 002-2v-2M9 9h6v6H9V9z" />
+          </svg>
+          <span class="text-slate-400">Thinking... <span class="text-xs text-slate-500 font-normal ml-1">(Running local
+              AI takes 10-20s)</span></span>
+        </ng-container>
+      </h4>
+
+      <!-- Skeleton Loaders -->
+      <div *ngIf="isExplaining" class="animate-pulse space-y-3">
+        <div class="h-2 bg-slate-700 rounded w-3/4"></div>
+        <div class="h-2 bg-slate-700 rounded w-full"></div>
+        <div class="h-2 bg-slate-700 rounded w-5/6"></div>
+        <div class="h-2 bg-slate-700 rounded w-1/2"></div>
+      </div>
+
+      <!-- Result Text -->
+      <div *ngIf="explanationResult && !isExplaining"
+        class="text-sm text-slate-300 leading-relaxed whitespace-pre-wrap">
+        {{ explanationResult }}
+      </div>
+    </div>
+
+    <!-- Related Snippets -->
     <div class="flex-1 p-6 overflow-y-auto">
-      <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Related Snippets</h4>
+      <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3" *ngIf="relatedSnippets.length > 0">
+        Related Snippets</h4>
       <div class="space-y-3">
-        <div
+        <div *ngFor="let relSnippet of relatedSnippets" (click)="openSnippetModal(relSnippet)"
           class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition-colors cursor-pointer">
-          <div class="w-6 h-6 rounded-md bg-slate-700 flex items-center justify-center">
+          <div class="w-6 h-6 rounded-md bg-slate-700 flex items-center justify-center flex-shrink-0">
             <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
           </div>
-          <div>
-            <div class="text-sm font-medium text-white">Related Snippet 1</div>
-            <div class="text-xs text-slate-500">Python, API</div>
-          </div>
-        </div>
-        <div
-          class="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg hover:bg-slate-700/50 transition-colors cursor-pointer">
-          <div class="w-6 h-6 rounded-md bg-slate-700 flex items-center justify-center">
-            <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-            </svg>
-          </div>
-          <div>
-            <div class="text-sm font-medium text-white">Related Snippet 2</div>
-            <div class="text-xs text-slate-500">JavaScript, Frontend</div>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm font-medium text-white truncate">{{ relSnippet.title }}</div>
+            <div class="text-xs text-slate-500 truncate">{{ relSnippet.language || 'Unknown' }}</div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Snippet Modal -->
+<div *ngIf="isCreateModalOpen"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a]/80 backdrop-blur-sm">
+  <div class="bg-[#1e293b] w-full max-w-2xl rounded-2xl border border-slate-700/50 shadow-2xl p-6 flex flex-col"
+    style="max-height: 90vh;">
+    <div class="flex items-center justify-between mb-6 shrink-0">
+      <h3 class="text-xl font-bold text-white">Create New Snippet</h3>
+      <button (click)="closeCreateModal()" class="text-slate-400 hover:text-white transition-colors">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="space-y-4 mb-6 overflow-y-auto flex-1 pr-2">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Title</label>
+          <input type="text" [(ngModel)]="newSnippet.title"
+            class="w-full bg-[#0f172a] border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+            placeholder="e.g. Fetch API wrapper" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-400 mb-2">Language</label>
+          <input type="text" [(ngModel)]="newSnippet.language"
+            class="w-full bg-[#0f172a] border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+            placeholder="e.g. javascript" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-2">Description</label>
+        <textarea [(ngModel)]="newSnippet.description"
+          class="w-full bg-[#0f172a] border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+          rows="2" placeholder="Brief description..."></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-2">Tags (comma separated)</label>
+        <input type="text" [(ngModel)]="newSnippet.tagName"
+          class="w-full bg-[#0f172a] border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+          placeholder="e.g. react, api, fetch" />
+      </div>
+      <div class="flex-1 flex flex-col min-h-[200px]">
+        <label class="block text-sm font-medium text-slate-400 mb-2">Code</label>
+        <textarea [(ngModel)]="newSnippet.code_content" (ngModelChange)="onNewCodeChange()"
+          class="w-full flex-1 bg-[#0f172a] font-mono border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+          placeholder="Paste your code here..."></textarea>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 shrink-0 pt-4 border-t border-slate-800/60">
+      <button (click)="closeCreateModal()"
+        class="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors">Cancel</button>
+      <button (click)="createSnippet()"
+        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">Create
+        Snippet</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div *ngIf="toastMessage"
+  class="fixed bottom-6 right-6 z-[100] flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl shadow-lg transition-all transform duration-300">
+  <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+  <span class="text-sm font-medium">{{ toastMessage }}</span>
+</div>
+
+<!-- Custom Delete Confirmation Modal -->
+<div *ngIf="isDeleteModalOpen"
+  class="fixed inset-0 z-[60] flex items-center justify-center bg-[#0f172a]/80 backdrop-blur-sm">
+  <div
+    class="bg-[#1e293b] w-full max-w-sm rounded-2xl border border-red-500/30 shadow-2xl p-6 flex flex-col items-center text-center">
+
+    <!-- Warning Icon -->
+    <div class="w-14 h-14 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
+      <svg class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+
+    <h3 class="text-lg font-bold text-white mb-2">Delete Snippet?</h3>
+    <p class="text-sm text-slate-400 mb-6">Are you sure you want to delete <strong class="text-white">"{{
+        selectedSnippet?.title }}"</strong>? This action cannot be undone.</p>
+
+    <div class="flex w-full gap-3">
+      <button (click)="closeDeleteModal()"
+        class="flex-1 px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition-colors">
+        Cancel
+      </button>
+      <button (click)="confirmDeleteSnippet()"
+        class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+        Yes, Delete
+      </button>
     </div>
   </div>
 </div>

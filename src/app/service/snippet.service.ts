@@ -8,7 +8,7 @@ export class SnippetService {
 
   private api = "http://localhost:8080/api/snippets";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -46,6 +46,13 @@ export class SnippetService {
   deleteSnippet(id: number) {
     return this.http.delete(`${this.api}/delete/${id}`, {
       headers: this.getHeaders()
+    });
+  }
+
+  explainSnippet(codeContent: string) {
+    return this.http.post(`${this.api}/explain`, { code_content: codeContent }, {
+      headers: this.getHeaders(),
+      responseType: 'text' // Spring Boot returns a plain string, not JSON
     });
   }
 }

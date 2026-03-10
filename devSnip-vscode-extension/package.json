@@ -1,0 +1,53 @@
+{
+    "name": "devsnip-companion",
+    "displayName": "Snippet Vault Companion",
+    "description": "Send code snippets directly to your devSnip application",
+    "version": "1.0.0",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "devsnip.sendToVault",
+                "title": "Send to Snippet Vault"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "when": "editorHasSelection",
+                    "command": "devsnip.sendToVault",
+                    "group": "1_modification"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Snippet Vault",
+            "properties": {
+                "devSnip.apiUrl": {
+                    "type": "string",
+                    "default": "http://localhost:8080/api",
+                    "description": "The base URL for your Snippet Vault Spring Boot API."
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run package",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "package": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node"
+    },
+    "devDependencies": {
+        "@types/node": "18.x",
+        "@types/vscode": "^1.80.0",
+        "esbuild": "^0.19.0",
+        "typescript": "^5.1.0"
+    }
+}
